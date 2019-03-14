@@ -25,7 +25,7 @@ import java.util.List;
  * @author 财财
  * @version 2019年3月13日14:08:00
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     Activity activity = MainActivity.this;
 
@@ -61,33 +61,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //绑定
         listView.setAdapter(listViewAdapter);
 
-        /**
-         * 实现点击事件（修改）
-         */
-        listViewAdapter.setLinster(new ListViewAdapter.ItemOnClickLinster() {
-            @Override
-            public void textItemOnClick(View view, int position) {
-                Log.d("TAG", "单击事件");
-                //修改数据不能相同，否则会报错
-                dao.update(new UserInfo(datas.get(position).getId(), datas.get(position).getName() + "我被修改啦", datas.get(position).getPhonenum()));
-                //刷新数据
-                notifyListView();
-            }
-        });
-
-        /**
-         * 实现长按事件（删除）
-         */
-        listViewAdapter.setlongLinster(new ListViewAdapter.ItemOnLongClickLinster() {
-            @Override
-            public void textItemOnLongClick(View view, int position) {
-                Log.d("TAG", "长按事件");
-                //根据对应的id删掉该列数据
-                dao.deleteByKey(datas.get(position).getId());
-                //刷新数据
-                notifyListView();
-            }
-        });
+        //点击事件
+        listView.setOnItemClickListener(this);
+        //长按事件
+        listView.setOnItemLongClickListener(this);
     }
 
     private void initView() {
@@ -130,4 +107,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listView.setAdapter(listViewAdapter);
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("TAG", "单击事件");
+                //修改数据不能相同，否则会报错
+                dao.update(new UserInfo(datas.get(position).getId(), datas.get(position).getName() + "我被修改啦", datas.get(position).getPhonenum()));
+                //刷新数据
+                notifyListView();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("TAG", "长按事件");
+        //根据对应的id删掉该列数据
+        dao.deleteByKey(datas.get(position).getId());
+        //刷新数据
+        notifyListView();
+        return true;
+    }
 }
